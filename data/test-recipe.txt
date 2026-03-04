@@ -1,0 +1,23 @@
+Simple Pasta Recipe
+
+Servings: 4
+Prep Time: 10 minutes
+Cook Time: 20 minutes
+Difficulty: Easy
+
+Ingredients:
+- 400g spaghetti
+- 2 tablespoons olive oil
+- 4 cloves garlic, minced
+- 1 can crushed tomatoes (400g)
+- 1 teaspoon salt
+- Fresh basil leaves
+- Parmesan cheese, grated
+
+Instructions:
+1. Bring a large pot of salted water to boil. Cook spaghetti according to package directions.
+2. While pasta cooks, heat olive oil in a large pan over medium heat.
+3. Add minced garlic and sauté for 1 minute until fragrant.
+4. Add crushed tomatoes and salt. Simmer for 10 minutes.
+5. Drain pasta and add to the sauce. Toss to combine.
+6. Serve topped with fresh basil and parmesan cheese.
