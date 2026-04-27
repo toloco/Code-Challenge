@@ -1,6 +1,10 @@
 import { type ChangeEvent, type FormEvent, useState } from 'react'
 
-function UploadPanel() {
+type UploadPanelProps = {
+  onUploadSuccess: (data: any) => void
+}
+
+function UploadPanel({ onUploadSuccess }: UploadPanelProps) {
   const [selectedFile, setSelectedFile] = useState<File | null>(null)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
@@ -72,6 +76,7 @@ function UploadPanel() {
       setThreadId(data.threadId ?? null)
       setRecipe(data)
       setRawResponse(data)
+      onUploadSuccess(data)
       console.log('Upload response:', data)
     } catch (err) {
       const message = err instanceof Error ? err.message : 'Upload failed. Please try again.'
