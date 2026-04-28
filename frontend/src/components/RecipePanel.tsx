@@ -1,5 +1,3 @@
-import { useEffect, useState } from 'react'
-
 type Ingredient = {
   name: string
   quantity: number | null
@@ -22,8 +20,20 @@ export type Recipe = {
   steps: RecipeStep[]
 }
 
-type RecipePanelProps = {
+export type RecipeContext = {
+  document_text: string | null
   recipe: Recipe | null
+  current_step: number
+  scaled_servings: number | null
+  checked_ingredients: string[]
+  cooking_started: boolean
+}
+
+type RecipePanelProps = {
+  sharedState: RecipeContext | null
+  setSharedState?: (
+    next: RecipeContext | ((current: RecipeContext | undefined) => RecipeContext),
+  ) => void
 }
 
 function formatIngredient(ingredient: Ingredient) {
@@ -37,20 +47,16 @@ function formatIngredient(ingredient: Ingredient) {
   return parts.join(' ')
 }
 
-function RecipePanel({ recipe }: RecipePanelProps) {
-  const [checkedIngredients, setCheckedIngredients] = useState<string[]>([])
+function clampStepIndex(stepIndex: number, totalSteps: number) {
+  if (!Number.isFinite(stepIndex) || stepIndex < 0) return 0
+  if (totalSteps <= 0) return 0
+  return Math.min(stepIndex, totalSteps - 1)
+}
 
-  useEffect(() => {
-    setCheckedIngredients([])
-  }, [recipe?.title])
+function RecipePanel({ sharedState, setSharedState }: RecipePanelProps) {
+  const recipe = sharedState?.recipe ?? null
 
-  function toggleIngredient(name: string) {
-    setCheckedIngredients((current) =>
-      current.includes(name) ? current.filter((item) => item !== name) : [...current, name],
-    )
-  }
-
-  if (!recipe) {
+  if (!sharedState || !recipe) {
     return (
       <section className="panel panel-primary">
         <h2>Recipe Display</h2>
@@ -61,7 +67,29 @@ function RecipePanel({ recipe }: RecipePanelProps) {
     )
   }
 
+  const baseContext = sharedState
   const totalSteps = recipe.steps?.length ?? 0
+  const currentStepIndex = clampStepIndex(baseContext.current_step ?? 0, totalSteps)
+  const displayServings = baseContext.scaled_servings ?? recipe.servings
+  const checkedIngredients = baseContext.checked_ingredients ?? []
+
+  function toggleIngredient(name: string) {
+    if (!setSharedState) return
+
+    setSharedState((current) => {
+      if (!current) return baseContext
+
+      const currentChecked = current.checked_ingredients ?? []
+      const nextChecked = currentChecked.includes(name)
+        ? currentChecked.filter((item) => item !== name)
+        : [...currentChecked, name]
+
+      return {
+        ...current,
+        checked_ingredients: nextChecked,
+      }
+    })
+  }
 
   return (
     <section className="panel panel-primary">
@@ -71,8 +99,11 @@ function RecipePanel({ recipe }: RecipePanelProps) {
       <div className="recipe-meta" aria-label="Recipe details">
         {recipe.prep_time_minutes ? <span>Prep: {recipe.prep_time_minutes} min</span> : null}
         {recipe.cook_time_minutes ? <span>Cook: {recipe.cook_time_minutes} min</span> : null}
-        {recipe.servings ? <span>Servings: {recipe.servings}</span> : null}
+        {displayServings ? (
+          <span>{sharedState.scaled_servings ? 'Scaled servings' : 'Servings'}: {displayServings}</span>
+        ) : null}
         {recipe.difficulty ? <span>Difficulty: {recipe.difficulty}</span> : null}
+        <span>{sharedState.cooking_started ? 'Cooking started' : 'Not started yet'}</span>
       </div>
 
       <section className="recipe-section" aria-label="Ingredients">
@@ -97,7 +128,11 @@ function RecipePanel({ recipe }: RecipePanelProps) {
         <h4>Steps</h4>
         <ol className="step-list">
           {recipe.steps?.map((step, index) => (
-            <li key={step.step_number} className="step-item">
+            <li
+              key={step.step_number}
+              className={`step-item${index === currentStepIndex ? ' is-current' : ''}`}
+              aria-current={index === currentStepIndex ? 'step' : undefined}
+            >
               <p className="step-indicator">
                 Step {index + 1} of {totalSteps}
               </p>
@@ -107,7 +142,7 @@ function RecipePanel({ recipe }: RecipePanelProps) {
         </ol>
       </section>
       <div className="step-summary">
-        Step 1 of {totalSteps} (AI step tracking will be added in a later step)
+        Step {totalSteps ? currentStepIndex + 1 : 0} of {totalSteps}
       </div>
     </section>
   )

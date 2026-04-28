@@ -3,14 +3,15 @@ import { CopilotKit } from '@copilotkit/react-core'
 import { HttpAgent } from '@ag-ui/client'
 import './App.css'
 import AppHeader from './components/AppHeader'
+import AppSessionShell from './components/AppSessionShell'
 import AssistantPanel from './components/AssistantPanel'
-import RecipePanel, { type Recipe } from './components/RecipePanel'
+import RecipePanel, { type RecipeContext } from './components/RecipePanel'
 import UploadPanel from './components/UploadPanel'
 
 type UploadSession = {
   threadId: string
   runId: string
-  state: Record<string, unknown>
+  state: RecipeContext
 }
 
 const SESSION_STORAGE_KEY = 'recipe-companion:last-session'
@@ -83,7 +84,7 @@ function App() {
         setSession({
           threadId: parsed.threadId,
           runId: parsed.runId,
-          state: parsed.state as Record<string, unknown>,
+          state: parsed.state as RecipeContext,
         })
       }
     } catch {
@@ -96,31 +97,28 @@ function App() {
     window.localStorage.setItem(SESSION_STORAGE_KEY, JSON.stringify(session))
   }, [session])
 
-  const recipe = (session?.state?.recipe as Recipe | undefined) ?? null
   const threadId = session?.threadId ?? null
+  const recipeContext = session?.state ?? null
+  const recipe = recipeContext?.recipe ?? null
   const isReady = Boolean(recipe && threadId)
 
-  const shell = (
+  const onUploadSuccess = (data: any) => {
+    const nextSession = {
+      threadId: String(data.threadId ?? ''),
+      runId: String(data.runId ?? ''),
+      state: (data.state ?? {}) as RecipeContext,
+    }
+    setSession(nextSession)
+  }
+  // fallback while CopilotKit starts to keep UI friendly
+  const shellWithoutAgent = (
     <main className="app-shell">
       <AppHeader />
       <div className="layout-grid">
-        <RecipePanel recipe={recipe} />
+        <RecipePanel sharedState={recipeContext} />
         <aside className="side-column" aria-label="Secondary panels">
-          <UploadPanel
-            onUploadSuccess={(data) => {
-              const nextSession = {
-                threadId: String(data.threadId ?? ''),
-                runId: String(data.runId ?? ''),
-                state: (data.state ?? {}) as Record<string, unknown>,
-              }
-              setSession(nextSession)
-            }}
-          />
-          <AssistantPanel
-            sessionActive={Boolean(threadId)}
-            isReady={isReady}
-            initialRecipeContext={session?.state}
-          />
+          <UploadPanel onUploadSuccess={onUploadSuccess} />
+          <AssistantPanel sessionActive={Boolean(threadId)} isReady={isReady} />
         </aside>
       </div>
     </main>
@@ -129,8 +127,8 @@ function App() {
   // CopilotKit contacts /copilotkit/ as soon as it mounts. Without a threadId from
   // POST /upload, those requests are invalid and the server returns 422, so we
   // wait until we have a thread before wrapping the app in the provider.
-  if (!threadId) {
-    return shell
+  if (!threadId || !recipeContext) {
+    return shellWithoutAgent
   }
 
   return (
@@ -142,7 +140,12 @@ function App() {
       threadId={threadId}
       showDevConsole={false}
     >
-      {shell}
+      <AppSessionShell
+        threadId={threadId}
+        isReady={isReady}
+        initialRecipeContext={recipeContext}
+        onUploadSuccess={onUploadSuccess}
+      />
     </CopilotKit>
   )
 }
