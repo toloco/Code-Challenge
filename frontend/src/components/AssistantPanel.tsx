@@ -62,9 +62,6 @@ function AssistantPanel({ sessionActive, isReady }: AssistantPanelProps) {
       {!sessionActive || !isReady ? (
         <div className="assistant-disabled-shell" aria-disabled="true">
           <p className="assistant-disabled-note">Upload a recipe to start chatting.</p>
-          <div className="assistant-disabled-input" aria-hidden="true">
-            Type a message...
-          </div>
         </div>
       ) : (
         <>

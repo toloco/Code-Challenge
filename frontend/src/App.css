@@ -306,13 +306,13 @@
 }
 
 .status-error {
-  margin: 0.75rem 0 0;
+  margin: 2rem;
   color: #b91c1c;
   font-weight: 600;
 }
 
 .status-ok {
-  margin: 0.75rem 0 0;
+  margin: 2rem;
   color: #365c3d;
   font-weight: 600;
 }

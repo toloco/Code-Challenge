@@ -1,7 +1,13 @@
 import { type ChangeEvent, type FormEvent, useState } from 'react'
 
+export type UploadResponse = {
+  threadId?: unknown
+  runId?: unknown
+  state?: unknown
+}
+
 type UploadPanelProps = {
-  onUploadSuccess: (data: any) => void
+  onUploadSuccess: (data: UploadResponse) => void
 }
 
 function UploadPanel({ onUploadSuccess }: UploadPanelProps) {
@@ -16,6 +22,19 @@ function UploadPanel({ onUploadSuccess }: UploadPanelProps) {
 
   function delay(ms: number) {
     return new Promise((resolve) => setTimeout(resolve, ms))
+  }
+
+  function getUploadErrorMessage(status: number | null) {
+    if (status === 422) {
+      return 'Looks like we are out of tokens, please get in touch.'
+    }
+    if (status === 429) {
+      return 'Too many requests right now. Please wait a moment and try again.'
+    }
+    if (status) {
+      return `Upload failed with status ${status}`
+    }
+    return 'Upload failed. Please try again.'
   }
 
   function handleFileChange(event: ChangeEvent<HTMLInputElement>) {
@@ -37,7 +56,7 @@ function UploadPanel({ onUploadSuccess }: UploadPanelProps) {
     setError(null)
 
     try {
-      let data: any = null
+      let data: UploadResponse | null = null
       let uploadSucceeded = false
       let lastStatus: number | null = null
 
@@ -63,13 +82,11 @@ function UploadPanel({ onUploadSuccess }: UploadPanelProps) {
           continue
         }
 
-        throw new Error(`Upload failed with status ${response.status}`)
+        throw new Error(getUploadErrorMessage(response.status))
       }
 
       if (!uploadSucceeded || !data) {
-        throw new Error(
-          lastStatus ? `Upload failed with status ${lastStatus}` : 'Upload failed. Please try again.',
-        )
+        throw new Error(getUploadErrorMessage(lastStatus))
       }
 
       setUploadComplete(true)

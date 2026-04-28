@@ -100,6 +100,9 @@ export default defineConfig({
                 body: JSON.stringify(payload),
               })
 
+              // TODO: Some token limit errors come back in streamed 200 responses.
+              // Handle 429/quota mapping here so the UI gets one clear error shape.
+
               res.statusCode = upstream.status
               const contentType = upstream.headers.get('content-type')
               if (contentType) {
