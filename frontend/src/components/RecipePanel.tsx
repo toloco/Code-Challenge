@@ -111,13 +111,17 @@ function RecipePanel({ sharedState, setSharedState }: RecipePanelProps) {
         <ul className="ingredient-list">
           {recipe.ingredients?.map((ingredient) => (
             <li key={ingredient.name}>
-              <label className="ingredient-item">
+              <label
+                className={`ingredient-item${
+                  checkedIngredients.includes(ingredient.name) ? ' is-checked' : ''
+                }`}
+              >
                 <input
                   type="checkbox"
                   checked={checkedIngredients.includes(ingredient.name)}
                   onChange={() => toggleIngredient(ingredient.name)}
                 />
-                <span>{formatIngredient(ingredient)}</span>
+                <span className="ingredient-text">{formatIngredient(ingredient)}</span>
               </label>
             </li>
           ))}
@@ -135,6 +139,7 @@ function RecipePanel({ sharedState, setSharedState }: RecipePanelProps) {
             >
               <p className="step-indicator">
                 Step {index + 1} of {totalSteps}
+                {index === currentStepIndex ? <span className="current-step-badge">Current</span> : null}
               </p>
               <p>{step.instruction}</p>
             </li>

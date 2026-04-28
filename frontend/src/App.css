@@ -193,8 +193,9 @@
 }
 
 .step-item.is-current {
-  background: #eef5ef;
+  background: #eaf3eb;
   border: 1px solid var(--sage);
+  border-left: 4px solid var(--sage);
   box-shadow: 0 0 0 1px rgba(107, 143, 113, 0.2);
   transform: translateY(-1px);
 }
@@ -207,6 +208,22 @@
   margin: 0 0 0.4rem;
   font-size: 0.9rem;
   color: var(--text);
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+}
+
+.current-step-badge {
+  display: inline-flex;
+  align-items: center;
+  border: 1px solid #a9c5ae;
+  border-radius: 999px;
+  padding: 0.1rem 0.45rem;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.01em;
+  color: #2c4a31;
+  background: #f3faf4;
 }
 
 .step-summary {
@@ -220,12 +237,14 @@
   width: 100%;
   border: 1px solid var(--terracotta-dark);
   border-radius: 10px;
-  background: var(--terracotta);
+  background: linear-gradient(180deg, #d24d11 0%, var(--terracotta) 100%);
   color: #fffbf5;
   font-size: 1rem;
-  font-weight: 600;
+  font-weight: 700;
   padding: 0.75rem 1rem;
-  transition: background-color 150ms ease, border-color 150ms ease, box-shadow 150ms ease;
+  box-shadow: 0 6px 14px rgba(154, 52, 18, 0.26);
+  transition: background-color 150ms ease, border-color 150ms ease, box-shadow 150ms ease,
+    transform 150ms ease;
 }
 
 .upload-form {
@@ -240,15 +259,22 @@
 
 .file-input:focus-visible,
 .touch-button:focus-visible,
-.ingredient-item input:focus-visible {
+.ingredient-item input:focus-visible,
+.voice-button:focus-visible {
   outline: 2px solid var(--sage);
   outline-offset: 2px;
 }
 
 .touch-button:hover:not(:disabled) {
-  background: var(--terracotta-dark);
+  background: linear-gradient(180deg, #b94410 0%, var(--terracotta-dark) 100%);
   border-color: var(--terracotta-dark);
-  box-shadow: 0 4px 10px rgba(154, 52, 18, 0.2);
+  box-shadow: 0 8px 16px rgba(154, 52, 18, 0.34);
+  transform: translateY(-2px);
+}
+
+.touch-button:active:not(:disabled) {
+  transform: translateY(0);
+  box-shadow: 0 3px 8px rgba(154, 52, 18, 0.25);
 }
 
 .touch-button:disabled {
@@ -262,6 +288,16 @@
 .ingredient-item:hover {
   border-color: #c8b8a6;
   background: #fff7ed;
+}
+
+.ingredient-item.is-checked {
+  background: #f9f3eb;
+  border-color: #d5c7b7;
+}
+
+.ingredient-item.is-checked .ingredient-text {
+  opacity: 0.72;
+  text-decoration: line-through;
 }
 
 .upload-meta {
@@ -288,15 +324,85 @@
 }
 
 .assistant-disabled-note {
-  margin: 0.4rem 0 0;
+  margin: 0;
   padding: 0.8rem;
   border: 1px dashed #d4c6b5;
   border-radius: 10px;
   background: #fff4e8;
 }
 
+.assistant-disabled-shell {
+  margin-top: 0.4rem;
+  display: grid;
+  gap: 0.55rem;
+}
+
+.assistant-disabled-input {
+  min-height: 44px;
+  border: 1px solid #d9cec1;
+  border-radius: 10px;
+  background: #f3eee6;
+  color: #9a8f84;
+  padding: 0.75rem 0.85rem;
+  font-size: 0.95rem;
+}
+
+.assistant-chat-tools {
+  display: grid;
+  gap: 0.3rem;
+  margin-top: 0.55rem;
+}
+
+.voice-button {
+  min-height: 36px;
+  justify-self: start;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  border: 1px solid #c8b8a6;
+  border-radius: 999px;
+  background: #fff7ed;
+  color: #6a5f57;
+  padding: 0.3rem 0.7rem;
+  font-size: 0.82rem;
+  font-weight: 600;
+  transition: background-color 150ms ease, border-color 150ms ease, box-shadow 150ms ease;
+}
+
+.voice-button:hover:not(:disabled) {
+  background: #fdf4e7;
+  border-color: #bca891;
+}
+
+.voice-button-icon {
+  width: 15px;
+  height: 15px;
+  flex: 0 0 auto;
+}
+
+.voice-button.is-listening {
+  background: #365c3d;
+  border-color: #2d4b32;
+  color: #fffbf5;
+  box-shadow: 0 0 0 3px rgba(107, 143, 113, 0.2);
+}
+
+.voice-button:disabled {
+  opacity: 0.65;
+  cursor: not-allowed;
+}
+
+.voice-status {
+  margin: 0;
+  font-size: 0.82rem;
+  color: var(--muted);
+}
+
+.voice-error {
+  margin-top: 0.1rem;
+}
+
 .assistant-chat-shell {
-  margin-top: 0.8rem;
   min-height: 280px;
   max-height: min(62vh, 520px);
   border: 1px solid var(--border);

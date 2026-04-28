@@ -8,9 +8,7 @@ function UploadPanel({ onUploadSuccess }: UploadPanelProps) {
   const [selectedFile, setSelectedFile] = useState<File | null>(null)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
-  const [threadId, setThreadId] = useState<string | null>(null)
-  const [recipe, setRecipe] = useState<any>(null)
-  const [rawResponse, setRawResponse] = useState<any>(null)
+  const [uploadComplete, setUploadComplete] = useState(false)
 
   function isRetryableStatus(status: number) {
     return status === 422 || status === 429 || status === 503
@@ -24,6 +22,7 @@ function UploadPanel({ onUploadSuccess }: UploadPanelProps) {
     const file = event.target.files?.[0] ?? null
     setSelectedFile(file)
     setError(null)
+    setUploadComplete(false)
   }
 
   async function handleUpload(event: FormEvent<HTMLFormElement>) {
@@ -73,11 +72,8 @@ function UploadPanel({ onUploadSuccess }: UploadPanelProps) {
         )
       }
 
-      setThreadId(data.threadId ?? null)
-      setRecipe(data)
-      setRawResponse(data)
+      setUploadComplete(true)
       onUploadSuccess(data)
-      console.log('Upload response:', data)
     } catch (err) {
       const message = err instanceof Error ? err.message : 'Upload failed. Please try again.'
       setError(message)
@@ -109,9 +105,7 @@ function UploadPanel({ onUploadSuccess }: UploadPanelProps) {
       </form>
 
       {error ? <p className="status-error">{error}</p> : null}
-      {threadId ? <p className="status-ok">Thread created: {threadId}</p> : null}
-      {recipe ? <p className="status-meta">Recipe response stored for next step.</p> : null}
-      {rawResponse ? <p className="status-meta">Full response stored for later integration.</p> : null}
+      {uploadComplete ? <p className="status-ok">Recipe uploaded. You can start chatting now.</p> : null}
     </section>
   )
 }
