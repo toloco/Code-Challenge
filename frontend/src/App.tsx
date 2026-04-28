@@ -119,7 +119,7 @@ function App() {
           <AssistantPanel
             sessionActive={Boolean(threadId)}
             isReady={isReady}
-            initialAgentState={session?.state}
+            initialRecipeContext={session?.state}
           />
         </aside>
       </div>

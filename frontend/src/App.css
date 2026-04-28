@@ -185,6 +185,27 @@
   font-size: 0.95rem;
 }
 
+.assistant-disabled-note {
+  margin: 0.4rem 0 0;
+  padding: 0.8rem;
+  border: 1px dashed var(--border);
+  border-radius: 10px;
+  background: #f8fafc;
+}
+
+.assistant-chat-shell {
+  margin-top: 0.8rem;
+  min-height: 420px;
+  max-height: 62vh;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+.assistant-chat {
+  height: 100%;
+}
+
 @media (min-width: 768px) {
   .app-shell {
     padding: 1.5rem;
