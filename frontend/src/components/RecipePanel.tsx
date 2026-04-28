@@ -12,7 +12,7 @@ type RecipeStep = {
   instruction: string
 }
 
-type Recipe = {
+export type Recipe = {
   title: string
   prep_time_minutes: number | null
   cook_time_minutes: number | null
