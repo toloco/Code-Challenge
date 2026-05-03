@@ -1,6 +1,5 @@
 import { useState } from 'react'
 import { CopilotKit } from '@copilotkit/react-core'
-import { HttpAgent } from '@ag-ui/client'
 import './App.css'
 import AppHeader from './components/AppHeader'
 import AppSessionShell from './components/AppSessionShell'
@@ -12,10 +11,6 @@ type UploadSession = {
   threadId: string
   state: RecipeContext
 }
-
-const recipeAgent = new HttpAgent({
-  url: 'http://localhost:8000/copilotkit/',
-})
 
 function App() {
   const [session, setSession] = useState<UploadSession | null>(null)
@@ -57,10 +52,6 @@ function App() {
     <CopilotKit
       runtimeUrl="/copilotkit/"
       useSingleEndpoint
-      // Intentional for local challenge dev: we register the known backend agent
-      // here so CopilotKit can bind cleanly while the Vite /copilotkit adapter
-      // normalises request shapes for the Python AG-UI endpoint.
-      agents__unsafe_dev_only={{ recipe_agent: recipeAgent }}
       agent="recipe_agent"
       threadId={threadId}
       showDevConsole={false}
