@@ -84,6 +84,27 @@ OpenAPI at http://localhost:8000/docs.
 
 For state model, CopilotKit wiring and the agent's tools: [backend/README.md](backend/README.md).
 
+### 3. Run the CopilotKit BFF (Node)
+
+```bash
+cd runtime
+npm install
+npm run dev
+```
+
+This runs **CopilotRuntime** on Express at `http://localhost:3001`, with `recipe_agent`
+implemented as an `HttpAgent` pointing at the Python `/copilotkit` mount (see
+[backend/README.md](backend/README.md)). The Vite dev server proxies `/copilotkit` to
+that process.
+
+### 4. Run the frontend
+
+```bash
+cd frontend
+npm install
+npm run dev
+```
+
 ## Tips
 
 - Start with the walking skeleton: upload → chat → show recipe. Then iterate.
